@@ -6,12 +6,18 @@
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
 
-struct metadata {
-    /* empty */
+header ethernet_t {
+    bit<48> dstAddr; // Adresse MAC de destination
+    bit<48> srcAddr; // Adresse MAC source
+    bit<16> etherType; // Type EtherType
 }
 
 struct headers {
-    /* empty for the repeater */
+    ethernet_t ethernet;
+}
+
+struct metadata {
+    /* empty */
 }
 
 /*************************************************************************
@@ -21,9 +27,10 @@ struct headers {
 parser MyParser(packet_in packet,
                 out headers hdr,
                 inout metadata meta,
-                inout standard_metadata_t standard_metadata) {
+                inout standard_metadata_t smeta) {
 
     state start {
+        packet.extract(hdr.ethernet); // Extraire l'en-tête Ethernet
         transition accept;
     }
 }
@@ -44,64 +51,43 @@ control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t smeta) {
 
-    /* TODO v2: solution with a table */
-    /* Define:
-     *  - an action that modifies smeta.egress_spec
-     *  - a table that matches smeta.ingress_port and calls the previous action
-     */
-
-    // Action qui positionne le port de sortie (egress_spec)
     action set_egress(bit<9> port) {
         smeta.egress_spec = port;
     }
 
-    // Table avec un match exact sur ingress_port
-    table port_fwd_table {
+    table dmac {
         key = {
-            smeta.ingress_port : exact;
+            hdr.ethernet.dstAddr: exact;
         }
         actions = {
             set_egress;
             NoAction;
         }
-        size = 256;
-        default_action = NoAction;
+        size = 1024;
+        default_action = NoAction();
     }
 
     apply {
-        /* TODO v1: solution without a table */
-        /* Write the code directly here */
-
-        if (smeta.ingress_port == 1) {
-            smeta.egress_spec = 2;
-        } else if (smeta.ingress_port == 2) {
-            smeta.egress_spec = 1;
-        } else {
-            smeta.egress_spec = smeta.ingress_port;
-        }
-
-        /* TODO v2: solution with a table */
-        /* Apply the table you use */
-        port_fwd_table.apply();
+        dmac.apply();
     }
 }
 
 /*************************************************************************
-****************  E G R E S S   P R O C E S S I N G   *******************
+*****************  E G R E S S   P R O C E S S I N G   *******************
 *************************************************************************/
 
 control MyEgress(inout headers hdr,
                  inout metadata meta,
-                 inout standard_metadata_t standard_metadata) {
+                 inout standard_metadata_t smeta) {
     apply { }
 }
 
 /*************************************************************************
-*************   C H E C K S U M    C O M P U T A T I O N   **************
+*************   C H E C K S U M    C O M P U T A T I O N   ***************
 *************************************************************************/
 
 control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
-     apply { }
+    apply { }
 }
 
 /*************************************************************************
@@ -110,7 +96,7 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
 
 control MyDeparser(packet_out packet, in headers hdr) {
     apply {
-        /* Deparser not needed for the repeater */
+        packet.emit(hdr.ethernet);
     }
 }
 
