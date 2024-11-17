@@ -38,7 +38,7 @@ struct metadata {
     // annotate with @field_list(1)
     @field_list(1)
     bit<9> ingress_port;
-    bit<9> mcast_grp;
+    bit<16> mcast_grp;
 }
 
 
