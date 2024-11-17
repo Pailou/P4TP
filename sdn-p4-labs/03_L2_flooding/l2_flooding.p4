@@ -70,7 +70,7 @@ control MyIngress(inout headers hdr,
         }
         actions = {
             forward;
-            NoAction;
+            NoAction();
         }
         default_action = NoAction();
     }
@@ -82,7 +82,7 @@ control MyIngress(inout headers hdr,
         }
         actions = {
             broadcast;
-            NoAction;
+            NoAction();
         }
         default_action = NoAction();
     }
