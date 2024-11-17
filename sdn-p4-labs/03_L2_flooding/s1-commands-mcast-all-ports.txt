@@ -1,11 +1,4 @@
-# Create a multicast group with ID 1
 mc_mgrp_create 1
-
-# Create a multicast node with replication ID 0 that includes ports 1, 2, 3, and 4
 mc_node_create 0 1 2 3 4
-
-# Associate the multicast node with the multicast group 1
 mc_node_associate 1 0
-
-# Verify the multicast configuration
 mc_dump
