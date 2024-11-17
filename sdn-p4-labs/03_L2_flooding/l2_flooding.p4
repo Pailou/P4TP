@@ -32,7 +32,11 @@ parser MyParser(packet_in packet,
                 inout standard_metadata_t smeta) {
 
     state start {
-        packet.extract(hdr.ethernet); // Extract Ethernet header
+        /* TODO 2: parse ethernet header */
+        transition parse_ethernet;
+    }
+    state parse_ethernet {
+        packet.extract(hdr.ethernet);
         transition accept;
     }
 
@@ -67,13 +71,13 @@ control MyIngress(inout headers hdr,
     /* Define the dmac table with the correct key */
     table dmac {
         key = {
-            hdr.ethernet.dstAddr: exact;  // Match on the destination MAC address
+            hdr.ethernet.dstAddr : exact;
         }
         actions = {
-            forward;      // Forward packets to a specific port
-            NoAction();     // If no action is applied, do nothing
+            forward;
+            NoAction();
         }
-        default_action = NoAction();  // Default action when no match is found
+            default_action = NoAction();
     }
 
     /* Define the mcast_grp table */
@@ -120,7 +124,7 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
 
 control MyDeparser(packet_out packet, in headers hdr) {
     apply {
-        packet.emit(hdr.ethernet); // Deparse Ethernet header
+        packet.emit(hdr.ethernet);
     }
 }
 
