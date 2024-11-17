@@ -88,7 +88,7 @@ control MyIngress(inout headers hdr,
         default_action = NoAction();  // Default action
     }
     apply {
-        dmac.apply()
+        dmac.apply();
         // Appliquer la table dmac
         /*if (!dmac.apply().hit) {
             mcast_grp.apply();
