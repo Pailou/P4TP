@@ -11,7 +11,8 @@ struct metadata {
     /* empty */
 }
 
-/* Ethernet header definition */
+
+/* TODO 1: Define ethernet_t header and headers struct */
 header ethernet_t {
     macAddr_t dstAddr;
     macAddr_t srcAddr;
@@ -50,6 +51,7 @@ control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
     apply { }
 }
 
+
 /*************************************************************************
 **************  I N G R E S S   P R O C E S S I N G   ********************
 *************************************************************************/
@@ -58,17 +60,11 @@ control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t smeta) {
 
-    /* Action to forward packets to a specific port */
-    action forward(bit<9> egress_port) {
+    /* TODO 3: define an action to set smeta.egress_spec */
+    action forward(bit<9> egress_port){
         smeta.egress_spec = egress_port;
     }
 
-    /* Action to broadcast packets to a multicast group */
-    action broadcast(bit<16> mcast_grp) {
-        smeta.mcast_grp = mcast_grp;
-    }
-
-    /* Define the dmac table with the correct key */
     table dmac {
         key = {
             hdr.ethernet.dstAddr : exact;
@@ -78,25 +74,14 @@ control MyIngress(inout headers hdr,
             NoAction();
         }
             default_action = NoAction();
-    }
+        }
 
-    /* Define the mcast_grp table */
-    table mcast_grp {
-        key = {
-            smeta.ingress_port: exact;  // Match on the ingress port
-        }
-        actions = {
-            broadcast;   // Perform broadcast action
-            NoAction();    // If no match, do nothing
-        }
-        default_action = NoAction();  // Default action
-    }
+    /* TODO 4: define a dmac table that can trigger the previous action */
+    /* (default action will be NoAction defined in core.p4) */
+
+
     apply {
         dmac.apply();
-        // Appliquer la table dmac
-        /*if (!dmac.apply().hit) {
-            mcast_grp.apply();
-            }*/
     }
 }
 
@@ -111,11 +96,11 @@ control MyEgress(inout headers hdr,
 }
 
 /*************************************************************************
-*************   C H E C K S U M    C O M P U T A T I O N   **************
+*************   C H E C K S U M    C O M P U T A T I O N   ***************
 *************************************************************************/
 
 control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
-    apply { }
+     apply { }
 }
 
 /*************************************************************************
@@ -124,7 +109,9 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
 
 control MyDeparser(packet_out packet, in headers hdr) {
     apply {
+        /* TODO 6: deparse ethernet header */
         packet.emit(hdr.ethernet);
+
     }
 }
 
@@ -133,10 +120,10 @@ control MyDeparser(packet_out packet, in headers hdr) {
 *************************************************************************/
 
 V1Switch(
-    MyParser(),
-    MyVerifyChecksum(),
-    MyIngress(),
-    MyEgress(),
-    MyComputeChecksum(),
-    MyDeparser()
+MyParser(),
+MyVerifyChecksum(),
+MyIngress(),
+MyEgress(),
+MyComputeChecksum(),
+MyDeparser()
 ) main;
