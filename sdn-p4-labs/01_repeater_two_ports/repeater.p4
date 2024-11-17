@@ -108,7 +108,7 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
 control MyDeparser(packet_out packet, in headers hdr) {
     apply {
         /* TODO 6: deparse ethernet header */
-
+        packet.emit(hdr.ethernet);
     }
 }
 
