@@ -95,6 +95,7 @@ control MyIngress(inout headers hdr,
         actions = {
             forward;
             NoAction();
+            broadcast(bit<16> group);
         }
             default_action = broadcast(1);
     }
