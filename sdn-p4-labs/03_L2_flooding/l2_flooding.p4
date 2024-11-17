@@ -88,15 +88,14 @@ control MyIngress(inout headers hdr,
     }
 
     apply {
-        /* Apply dmac table */
-        if (dmac.apply().hit) {
-            /* If there's a match in dmac, forward the packet */
-            forward(dmac.apply().action.egress_port);
-        } else {
-            /* If no match in dmac, apply mcast_grp for broadcast */
-            mcast_grp.apply();
-        }
+    /* Appliquer la table dmac */
+    dmac.apply();
+
+    /* Si aucune correspondance dans dmac, appliquer la table mcast_grp pour la diffusion */
+    if (!dmac.apply().hit) {
+        mcast_grp.apply();
     }
+}
 
 }
 
