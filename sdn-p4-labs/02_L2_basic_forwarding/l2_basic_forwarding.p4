@@ -12,7 +12,14 @@ struct metadata {
 
 /* TODO 1: Define ethernet_t header and headers struct */
 
-
+header ethernet_t {
+    bit<48> dstAddr; // Adresse MAC de destination
+    bit<48> srcAddr; // Adresse MAC source
+    bit<16> etherType; // Type EtherType
+}
+struct headers {
+    ethernet_t ethernet;
+}
 
 /*************************************************************************
 ************************* P A R S E R  ***********************************
@@ -25,6 +32,7 @@ parser MyParser(packet_in packet,
 
     state start {
         /* TODO 2: parse ethernet header */
+        packet.extract(hdr.ethernet);
         transition accept;
     }
 
@@ -48,15 +56,27 @@ control MyIngress(inout headers hdr,
                   inout standard_metadata_t smeta) {
 
     /* TODO 3: define an action to set smeta.egress_spec */
-
+    action set_egress(bit<9> port) {
+        smeta.egress_spec = port;
+    }
 
     /* TODO 4: define a dmac table that can trigger the previous action */
     /* (default action will be NoAction defined in core.p4) */
-
+    table dmac {
+    key = {
+        hdr.ethernet.dstAddr: exact;
+    }
+    actions = {
+        set_egress;
+        NoAction;
+    }
+    size = 1024;
+    default_action = NoAction();
+}
 
     apply {
         /* TODO 5: apply the dmac table */
-
+        dmac.apply();
     }
 }
 
@@ -85,7 +105,7 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
 control MyDeparser(packet_out packet, in headers hdr) {
     apply {
         /* TODO 6: deparse ethernet header */
-
+        packet.emit(hdr.ethernet);
     }
 }
 
