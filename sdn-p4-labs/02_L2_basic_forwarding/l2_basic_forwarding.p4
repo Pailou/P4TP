@@ -1,4 +1,4 @@
-/* -*- P4_16 -*- */
+g/* -*- P4_16 -*- */
 #include <core.p4>
 #include <v1model.p4>
 
@@ -56,7 +56,7 @@ control MyIngress(inout headers hdr,
                   inout standard_metadata_t smeta) {
 
     /* TODO 3: define an action to set smeta.egress_spec */
-    action forward(bit<9> port) {
+    action forward(bit<9> egress_port) {
         smeta.egress_spec = port;
     }
 
