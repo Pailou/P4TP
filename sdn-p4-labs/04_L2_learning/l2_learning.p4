@@ -126,7 +126,7 @@ control MyIngress(inout headers hdr,
             mac_learn;
             NoAction();
         }
-        default_action = noAction();
+        default_action = NoAction();
     }
 
     apply {
