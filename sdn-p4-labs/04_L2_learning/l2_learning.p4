@@ -19,6 +19,7 @@ header ethernet_t {
 
 // TODO: define a new packet_in_t header which includes an ingress_port field
 // annotate with @controller_header("packet_in")
+
 @controller_header("packet_in")
 header packet_in_t {
     bit<9> ingress_port;
@@ -29,6 +30,7 @@ header cpu_t {
 // TODO: define struct headers
 struct headers {
     ethernet_t ethernet;
+    cpu_t cpu;
 }
 
 struct metadata {
@@ -36,8 +38,12 @@ struct metadata {
     // annotate with @field_list(1)
     @field_list(1)
     bit<9> ingress_port;
+    bit<16> mcast_grp;
 }
 
+field_list clone_field_list {
+    meta.ingress_port;
+}
 
 
 /*************************************************************************
@@ -109,7 +115,7 @@ control MyIngress(inout headers hdr,
     // TODO: add mac_learn action, saving ingress_port and cloning packet
     action mac_learn(bit<9> ingress_port) {
         meta.ingress_port = ingress_port;
-        clone_preserving_field_list(100);
+        clone_preserving_field_list(CloneType.I2E,100);
     }
 
     // TODO: add smac table to learn from source MAC address
@@ -120,7 +126,7 @@ control MyIngress(inout headers hdr,
         actions = {
             mac_learn;
         }
-        default_action = mac_learn;
+        default_action = mac_learn(smeta.ingress_port);
     }
 
     apply {
