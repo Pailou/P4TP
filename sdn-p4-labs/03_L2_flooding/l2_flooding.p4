@@ -54,7 +54,7 @@ control MyIngress(inout headers hdr,
                   inout standard_metadata_t smeta) {
 
     /* Action to forward packets to a specific port */
-    action forward(bit<9> port) {
+    action forward(bit<9> egress_port) {
         smeta.egress_spec = port;
     }
 
@@ -72,7 +72,6 @@ control MyIngress(inout headers hdr,
             forward;
             NoAction;
         }
-        size = 1024;
         default_action = NoAction();
     }
 
