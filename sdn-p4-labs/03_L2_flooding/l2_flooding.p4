@@ -55,7 +55,7 @@ control MyIngress(inout headers hdr,
 
     /* Action to forward packets to a specific port */
     action forward(bit<9> egress_port) {
-        smeta.egress_spec = port;
+        smeta.egress_spec = egress_port;
     }
 
     /* Action to broadcast packets to a multicast group */
