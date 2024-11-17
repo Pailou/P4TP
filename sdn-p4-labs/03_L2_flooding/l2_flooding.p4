@@ -87,7 +87,7 @@ control MyIngress(inout headers hdr,
         }
         default_action = NoAction();  // Default action
     }
-    apply 
+    apply {
     // Appliquer la table dmac
     if (dmac.apply().hit) {
         // Si une correspondance est trouvée, appliquer l'action
@@ -96,8 +96,6 @@ control MyIngress(inout headers hdr,
         // Sinon, appliquer la table mcast_grp
         mcast_grp.apply();
     }
-}
-
     }
 }
 
