@@ -5,15 +5,15 @@
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
-
+typedef bit<48> macAddr_t;
 struct metadata {
     /* empty */
 }
 
 /* Ethernet header definition */
 header ethernet_t {
-    bit<48> dstAddr;
-    bit<48> srcAddr;
+    macAddr_t dstAddr;
+    macAddr_t srcAddr;
     bit<16> etherType;
 }
 
@@ -70,7 +70,7 @@ control MyIngress(inout headers hdr,
         }
         actions = {
             forward;
-            NoAction;
+            NoAction();
         }
         default_action = NoAction();
     }
@@ -82,9 +82,8 @@ control MyIngress(inout headers hdr,
         }
         actions = {
             broadcast;
-            NoAction;
+            NoAction();
         }
-        size = 8;
         default_action = NoAction();
     }
 
