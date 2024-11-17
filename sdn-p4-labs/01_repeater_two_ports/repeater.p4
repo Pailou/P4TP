@@ -6,19 +6,13 @@
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
 
-header ethernet_t {
-    bit<48> dstAddr; // Adresse MAC de destination
-    bit<48> srcAddr; // Adresse MAC source
-    bit<16> etherType; // Type EtherType
-}
-
-struct headers {
-    ethernet_t ethernet;
-}
-
 struct metadata {
     /* empty */
 }
+
+/* TODO 1: Define ethernet_t header and headers struct */
+
+
 
 /*************************************************************************
 ************************* P A R S E R  ***********************************
@@ -30,9 +24,10 @@ parser MyParser(packet_in packet,
                 inout standard_metadata_t smeta) {
 
     state start {
-        packet.extract(hdr.ethernet); // Extraire l'en-tête Ethernet
+        /* TODO 2: parse ethernet header */
         transition accept;
     }
+
 }
 
 /*************************************************************************
@@ -43,6 +38,7 @@ control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
     apply { }
 }
 
+
 /*************************************************************************
 **************  I N G R E S S   P R O C E S S I N G   ********************
 *************************************************************************/
@@ -51,24 +47,16 @@ control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t smeta) {
 
-    action set_egress(bit<9> port) {
-        smeta.egress_spec = port;
-    }
+    /* TODO 3: define an action to set smeta.egress_spec */
 
-    table dmac {
-        key = {
-            hdr.ethernet.dstAddr: exact;
-        }
-        actions = {
-            set_egress;
-            NoAction;
-        }
-        size = 1024;
-        default_action = NoAction();
-    }
+
+    /* TODO 4: define a dmac table that can trigger the previous action */
+    /* (default action will be NoAction defined in core.p4) */
+
 
     apply {
-        dmac.apply();
+        /* TODO 5: apply the dmac table */
+
     }
 }
 
@@ -78,7 +66,7 @@ control MyIngress(inout headers hdr,
 
 control MyEgress(inout headers hdr,
                  inout metadata meta,
-                 inout standard_metadata_t smeta) {
+                 inout standard_metadata_t standard_metadata) {
     apply { }
 }
 
@@ -87,7 +75,7 @@ control MyEgress(inout headers hdr,
 *************************************************************************/
 
 control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
-    apply { }
+     apply { }
 }
 
 /*************************************************************************
@@ -96,7 +84,8 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
 
 control MyDeparser(packet_out packet, in headers hdr) {
     apply {
-        packet.emit(hdr.ethernet);
+        /* TODO 6: deparse ethernet header */
+
     }
 }
 
