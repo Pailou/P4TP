@@ -56,7 +56,7 @@ control MyIngress(inout headers hdr,
                   inout standard_metadata_t smeta) {
 
     /* TODO 3: define an action to set smeta.egress_spec */
-    action set_egress(bit<9> port) {
+    action forward(bit<9> port) {
         smeta.egress_spec = port;
     }
 
@@ -67,7 +67,7 @@ control MyIngress(inout headers hdr,
         hdr.ethernet.dstAddr: exact;
     }
     actions = {
-        set_egress;
+        forward;
         NoAction;
     }
     size = 1024;
