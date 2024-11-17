@@ -41,9 +41,7 @@ struct metadata {
     bit<16> mcast_grp;
 }
 
-field_list clone_field_list {
-    meta.ingress_port;
-}
+
 
 
 /*************************************************************************
