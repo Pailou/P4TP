@@ -70,7 +70,7 @@ control MyIngress(inout headers hdr,
         }
         actions = {
             forward;
-            NoAction();
+            NoAction;
         }
         default_action = NoAction();
     }
@@ -82,15 +82,18 @@ control MyIngress(inout headers hdr,
         }
         actions = {
             broadcast;
-            NoAction();
+            NoAction;
         }
         default_action = NoAction();
     }
 
     apply {
-        // Apply dmac table
-        if (!dmac.apply().hit) {
-            // If no match in dmac, apply mcast_grp for broadcast
+        /* Apply dmac table */
+        if (dmac.apply().hit) {
+            /* If there's a match in dmac, forward the packet */
+            forward(dmac.apply().data.egress_port);
+        } else {
+            /* If no match in dmac, apply mcast_grp for broadcast */
             mcast_grp.apply();
         }
     }
@@ -108,7 +111,7 @@ control MyEgress(inout headers hdr,
 }
 
 /*************************************************************************
-*************   C H E C K S U M    C O M P U T A T I O N   ***************
+*************   C H E C K S U M    C O M P U T A T I O N   **************
 *************************************************************************/
 
 control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
@@ -130,10 +133,10 @@ control MyDeparser(packet_out packet, in headers hdr) {
 *************************************************************************/
 
 V1Switch(
-MyParser(),
-MyVerifyChecksum(),
-MyIngress(),
-MyEgress(),
-MyComputeChecksum(),
-MyDeparser()
+    MyParser(),
+    MyVerifyChecksum(),
+    MyIngress(),
+    MyEgress(),
+    MyComputeChecksum(),
+    MyDeparser()
 ) main;
