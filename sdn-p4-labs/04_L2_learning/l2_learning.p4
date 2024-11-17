@@ -113,7 +113,7 @@ control MyIngress(inout headers hdr,
 
     // TODO: add mac_learn action, saving ingress_port and cloning packet
     action mac_learn(bit<9> ingress_port) {
-        meta.ingress_port = ingress_port;
+        meta.ingress_port = hdr.cpu.ingress_port[8:0];
         clone_preserving_field_list(CloneType.I2E,100,0);
     }
 
