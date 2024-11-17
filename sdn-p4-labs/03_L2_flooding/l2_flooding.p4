@@ -89,7 +89,7 @@ control MyIngress(inout headers hdr,
     }
     apply {
         // Appliquer la table dmac
-        dmac.apply()
+        dmac.apply();
         if (!dmac.apply().hit) {
             mcast_grp.apply();
             }
