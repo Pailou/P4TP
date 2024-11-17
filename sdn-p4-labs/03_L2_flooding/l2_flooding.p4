@@ -12,6 +12,15 @@ struct metadata {
 
 /* TODO: define ethernet_t header and headers struct */
 /* --> copy from previous exercise */
+header ethernet_t {
+    macAddr_t dstAddr;
+    macAddr_t srcAddr;
+    bit<16> etherType;
+}
+
+struct headers {
+    ethernet_t ethernet;
+}
 
 
 
@@ -26,7 +35,7 @@ parser MyParser(packet_in packet,
 
     state start {
         /* TODO: parse ethernet header --> copy from previous exercise */
-
+        packet.extract(hdr.ethernet)
         transition accept;
     }
 
@@ -51,11 +60,17 @@ control MyIngress(inout headers hdr,
 
     /* TODO: define a forward action to set smeta.egress_spec */
     /* --> copy from previous exercise */
-
+    action forward(bit<9> egress_port){
+        smeta.egress_spec = egress_port;
+    }
     /* New TODO v1: add a broadcast action to modify smeta.mcast_grp */
-
+    /*action broadcast() {
+        smeta.mcast_grp = 1; // Statiquement défini
+    }*/
     /* New TODO v2: modify the broadcast action, adding a parameter */
-
+    action broadcast(bit<16> mcast_grp) {
+        smeta.mcast_grp = mcast_grp;
+    }
 
     /* TODO: define a dmac table that can trigger the previous actions */
     /* --> copy from previous exercise */
@@ -64,13 +79,26 @@ control MyIngress(inout headers hdr,
 
 
     /* New TODO v2: define an mcast_grp table */
- 
+     table mcast_grp {
+        key = {
+            smeta.ingress_port: exact;
+        }
+        actions = {
+            broadcast;
+            NoAction;
+        }
+        size = 8;
+        default_action = NoAction();
+    }
 
     apply {
         /* TODO: apply dmac table --> copy from previous exercise */
  
         /* New TODO v2: apply mcast_grp table if no hit on dmac table */
-
+        if (!dmac.apply().hit) {
+            // If no match in dmac, apply mcast_grp for broadcast
+            mcast_grp.apply();
+        }
     }
 
 }
@@ -100,7 +128,7 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
 control MyDeparser(packet_out packet, in headers hdr) {
     apply {
         /* TODO: deparse ethernet header --> copy from previous exercise */
-
+        packet.emit(hdr.ethernet);
     }
 }
 
