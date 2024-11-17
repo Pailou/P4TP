@@ -71,7 +71,7 @@ control MyIngress(inout headers hdr,
         }
         actions = {
             forward;      // Forward packets to a specific port
-            NoAction;     // If no action is applied, do nothing
+            NoAction();     // If no action is applied, do nothing
         }
         default_action = NoAction();  // Default action when no match is found
     }
@@ -83,7 +83,7 @@ control MyIngress(inout headers hdr,
         }
         actions = {
             broadcast;   // Perform broadcast action
-            NoAction;    // If no match, do nothing
+            NoAction();    // If no match, do nothing
         }
         default_action = NoAction();  // Default action
     }
