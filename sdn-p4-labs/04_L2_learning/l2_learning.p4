@@ -19,7 +19,13 @@ header ethernet_t {
 
 // TODO: define a new packet_in_t header which includes an ingress_port field
 // annotate with @controller_header("packet_in")
-
+@controller_header("packet_in")
+header packet_in_t {
+    bit<9> ingress_port;
+}
+header cpu_t {
+    bit<9> ingress_port;
+}
 // TODO: define struct headers
 struct headers {
     ethernet_t ethernet;
@@ -28,7 +34,8 @@ struct headers {
 struct metadata {
     // TODO: add an ingress_port field in the user's metadata
     // annotate with @field_list(1)
-
+    @field_list(1)
+    bit<9> ingress_port;
 }
 
 
