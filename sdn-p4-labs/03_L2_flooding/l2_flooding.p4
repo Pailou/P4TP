@@ -91,7 +91,7 @@ control MyIngress(inout headers hdr,
         /* Apply dmac table */
         if (dmac.apply().hit) {
             /* If there's a match in dmac, forward the packet */
-            forward(dmac.apply().data.egress_port);
+            forward(dmac.apply().action.egress_port);
         } else {
             /* If no match in dmac, apply mcast_grp for broadcast */
             mcast_grp.apply();
