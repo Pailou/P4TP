@@ -6,6 +6,7 @@
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
 typedef bit<48> macAddr_t;
+
 struct metadata {
     /* empty */
 }
@@ -63,39 +64,41 @@ control MyIngress(inout headers hdr,
         smeta.mcast_grp = mcast_grp;
     }
 
-    /* dmac table: Matches destination MAC and triggers forward or broadcast */
+    /* Define the dmac table with the correct key */
     table dmac {
         key = {
-            hdr.ethernet.dstAddr: exact;
+            hdr.ethernet.dstAddr: exact;  // Match on the destination MAC address
         }
         actions = {
-            forward;
-            NoAction();
+            forward;      // Forward packets to a specific port
+            NoAction;     // If no action is applied, do nothing
         }
-        default_action = NoAction();
+        default_action = NoAction();  // Default action when no match is found
     }
 
-    /* mcast_grp table: Matches ingress port and triggers broadcast */
+    /* Define the mcast_grp table */
     table mcast_grp {
         key = {
-            smeta.ingress_port: exact;
+            smeta.ingress_port: exact;  // Match on the ingress port
         }
         actions = {
-            broadcast;
-            NoAction();
+            broadcast;   // Perform broadcast action
+            NoAction;    // If no match, do nothing
         }
-        default_action = NoAction();
+        default_action = NoAction();  // Default action
     }
 
-    apply {
-    /* Appliquer la table dmac */
+    /* Apply the dmac table */
     dmac.apply();
 
-    /* Si aucune correspondance dans dmac, appliquer la table mcast_grp pour la diffusion */
-    if (!dmac.apply().hit) {
+    /* Check if dmac table matched */
+    if (dmac.hit) {
+        // If match found, proceed with forwarding action
+        forward(dmac.data.egress_port);
+    } else {
+        // If no match in dmac, apply mcast_grp table for broadcast
         mcast_grp.apply();
     }
-}
 
 }
 
