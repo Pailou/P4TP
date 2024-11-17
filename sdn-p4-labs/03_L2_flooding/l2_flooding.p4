@@ -87,6 +87,7 @@ control MyIngress(inout headers hdr,
         }
         default_action = NoAction();  // Default action
     }
+    apply {
 
     /* Apply the dmac table */
     dmac.apply();
@@ -99,7 +100,7 @@ control MyIngress(inout headers hdr,
         // If no match in dmac, apply mcast_grp table for broadcast
         mcast_grp.apply();
     }
-
+    }
 }
 
 /*************************************************************************
