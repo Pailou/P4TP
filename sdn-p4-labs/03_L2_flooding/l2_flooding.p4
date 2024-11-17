@@ -87,15 +87,17 @@ control MyIngress(inout headers hdr,
         }
         default_action = NoAction();  // Default action
     }
-    apply {
+    apply 
+    // Appliquer la table dmac
+    if (dmac.apply().hit) {
+        // Si une correspondance est trouvée, appliquer l'action
+        forward(dmac.data.egress_port);
+    } else {
+        // Sinon, appliquer la table mcast_grp
+        mcast_grp.apply();
+    }
+}
 
-        /* Apply the dmac table */
-        ;
-    
-        /* Check if dmac table matched */
-        if (!dmac.apply().hit) {
-            mcast_grp.apply();
-        }
     }
 }
 
