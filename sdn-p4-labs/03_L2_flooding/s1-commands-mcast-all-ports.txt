@@ -1,0 +1,12 @@
+# Créer un groupe multicast avec l'ID 1
+add_mcast_group 1
+
+# Ajouter tous les ports du switch au groupe multicast 1
+add_mcast_group_member 1 1 2   # Ajoute le port 2 au groupe multicast 1
+add_mcast_group_member 1 1 3   # Ajoute le port 3 au groupe multicast 1
+add_mcast_group_member 1 1 4   # Ajoute le port 4 au groupe multicast 1
+# Ajoutez d'autres ports si nécessaire, selon la topologie de votre switch
+
+# Vérification de la configuration
+show_mcast_groups   # Affiche les groupes multicast configurés
+show_mcast_members  # Affiche les membres des groupes multicast
