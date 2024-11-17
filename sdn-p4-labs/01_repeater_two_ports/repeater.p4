@@ -71,12 +71,13 @@ control MyIngress(inout headers hdr,
     apply {
         /* TODO v1: solution without a table */
         /* Write the code directly here */
+
         if (smeta.ingress_port == 1) {
-            smeta.egress_spec = 2; // Ex : rediriger les paquets du port 1 vers le port 2
+            smeta.egress_spec = 2;
         } else if (smeta.ingress_port == 2) {
-            smeta.egress_spec = 1; // Ex : rediriger les paquets du port 2 vers le port 1
+            smeta.egress_spec = 1;
         } else {
-            smeta.egress_spec = smeta.ingress_port; // Bouclage sur le même port pour d'autres cas
+            smeta.egress_spec = smeta.ingress_port;
         }
 
         /* TODO v2: solution with a table */
