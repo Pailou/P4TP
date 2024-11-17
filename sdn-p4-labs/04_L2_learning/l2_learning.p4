@@ -114,7 +114,7 @@ control MyIngress(inout headers hdr,
     // TODO: add mac_learn action, saving ingress_port and cloning packet
     action mac_learn(bit<9> ingress_port) {
         meta.ingress_port = ingress_port;
-        clone_preserving_field_list(CloneType.I2E,100);
+        clone_preserving_field_list(CloneType.I2E,100,0);
     }
 
     // TODO: add smac table to learn from source MAC address
@@ -125,7 +125,7 @@ control MyIngress(inout headers hdr,
         actions = {
             mac_learn;
         }
-        default_action = mac_learn(smeta.ingress_port);
+        default_action = noAction();
     }
 
     apply {
