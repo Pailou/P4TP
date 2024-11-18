@@ -24,13 +24,10 @@ header ethernet_t {
 header packet_in_t {
     bit<16> ingress_port;
 }
-header cpu_t {
-    bit<16> ingress_port;
-}
 // TODO: define struct headers
 struct headers {
     ethernet_t ethernet;
-    cpu_t cpu;
+    packet_in_t cpu;
 }
 
 struct metadata {
@@ -38,7 +35,6 @@ struct metadata {
     // annotate with @field_list(1)
     @field_list(1)
     bit<16> ingress_port;
-    bit<16> mcast_grp;
 }
 
 
@@ -85,7 +81,7 @@ control MyIngress(inout headers hdr,
         smeta.egress_spec = egress_port;
     }
     action broadcast(bit<16> group) {
-        meta.mcast_grp = group;
+        smeta.mcast_grp = group;
     }
     // - copy dmac and mcast_grp tables from previous exercise
     table dmac {
@@ -95,9 +91,10 @@ control MyIngress(inout headers hdr,
         actions = {
             forward;
             NoAction();
-            broadcast;
+            //broadcast;
         }
-            default_action = broadcast(1);
+            //default_action = broadcast(1);
+            default_action = NoAction();
     }
 
     table mcast_grp {
@@ -108,13 +105,13 @@ control MyIngress(inout headers hdr,
             broadcast;
             NoAction();
         }
-        default_action = NoAction();
+        default_action = broadcast(1);
     }
 
     // TODO: add mac_learn action, saving ingress_port and cloning packet
     action mac_learn(bit<16> ingress_port) {
         meta.ingress_port = ingress_port;
-        clone_preserving_field_list(CloneType.I2E,100,0);
+        clone_preserving_field_list(CloneType.I2E,100,1);
     }
 
     // TODO: add smac table to learn from source MAC address
@@ -126,7 +123,7 @@ control MyIngress(inout headers hdr,
             mac_learn;
             NoAction();
         }
-        default_action = NoAction();
+        default_action = mac_learn();
     }
 
     apply {
