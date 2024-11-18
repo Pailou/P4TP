@@ -22,10 +22,10 @@ header ethernet_t {
 
 @controller_header("packet_in")
 header packet_in_t {
-    bit<9> ingress_port;
+    bit<16> ingress_port;
 }
 header cpu_t {
-    bit<9> ingress_port;
+    bit<16> ingress_port;
 }
 // TODO: define struct headers
 struct headers {
@@ -37,7 +37,7 @@ struct metadata {
     // TODO: add an ingress_port field in the user's metadata
     // annotate with @field_list(1)
     @field_list(1)
-    bit<9> ingress_port;
+    bit<16> ingress_port;
     bit<16> mcast_grp;
 }
 
