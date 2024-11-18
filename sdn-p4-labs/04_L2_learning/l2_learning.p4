@@ -153,7 +153,7 @@ control MyEgress(inout headers hdr,
         // (setValid and init ingress_port) 
          if (smeta.instance_type == PKT_INSTANCE_TYPE_INGRESS_CLONE) {
             hdr.cpu.setValid();
-            hdr.cpu.ingress_port = meta.ingress_port[8:0];
+            hdr.cpu.ingress_port = meta.ingress_port;
         }
      
     }
