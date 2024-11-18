@@ -124,7 +124,7 @@ control MyIngress(inout headers hdr,
             NoAction;
         }
         size = 1024;
-        default_action = mac_learn();
+        default_action = mac_learn(smeta.ingress_port);
     }
 
     apply {
