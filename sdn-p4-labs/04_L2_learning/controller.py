@@ -47,7 +47,12 @@ def writeSMacRule(p4info_helper, sw, macSrcAddr):
     """
     # TODO: create table_entry for MyIngress.smac table 
     # ...
-    
+    table_entry = p4info_helper.buildTableEntry(
+        table_name="MyIngress.smac",
+        match_fields={"hdr.ethernet.srcAddr": macSrcAddr},
+        action_name="MyIngress.mac_learn",
+        action_params={}
+    )
     try:
         sw.WriteTableEntry(table_entry)
         print("Installed ingress smac rule (stop learning from %s) on %s"
@@ -67,7 +72,12 @@ def writeDMacRule(p4info_helper, sw, macDstAddr, egress_port):
     """
     # TODO: create table_entry for MyIngress.dmac table 
     # ...
-   
+    table_entry = p4info_helper.buildTableEntry(
+        table_name="MyIngress.dmac",
+        match_fields={"hdr.ethernet.dstAddr": macDstAddr},
+        action_name="MyIngress.forward",
+        action_params={"egress_port": egress_port}
+    )
     try:
         sw.WriteTableEntry(table_entry)
         print("Installed ingress dmac rule (%s forward to %d) on %s"
@@ -82,7 +92,9 @@ def learn(p4info_helper, sw, mac_addr, ingress_port):
     # print("Learning mac %s on port %s" % (mac_addr, ingress_port))
     # TODO: call writeSMacRule and writeDMacRule
     # ...
-
+    print(f"Learning MAC address {mac_addr} on port {ingress_port}")
+    writeSMacRule(p4info_helper, sw, mac_addr)
+    writeDMacRule(p4info_helper, sw, mac_addr, ingress_port)
 
 # ================    
 #  Main function 
