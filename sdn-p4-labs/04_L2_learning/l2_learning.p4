@@ -25,7 +25,7 @@ header packet_in_t {
     bit<9> ingress_port;
 }
 header cpu_t {
-    bit<16> ingress_port;
+    bit<9> ingress_port;
 }
 // TODO: define struct headers
 struct headers {
@@ -37,7 +37,7 @@ struct metadata {
     // TODO: add an ingress_port field in the user's metadata
     // annotate with @field_list(1)
     @field_list(1)
-    bit<16> ingress_port;
+    bit<9> ingress_port;
     bit<16> mcast_grp;
 }
 
@@ -112,7 +112,7 @@ control MyIngress(inout headers hdr,
     }
 
     // TODO: add mac_learn action, saving ingress_port and cloning packet
-    action mac_learn(bit<9> ingress_port) {
+    action mac_learn(bit<16> ingress_port) {
         meta.ingress_port = ingress_port;
         clone_preserving_field_list(CloneType.I2E,100,0);
     }
