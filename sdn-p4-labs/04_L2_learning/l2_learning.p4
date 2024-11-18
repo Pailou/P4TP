@@ -109,8 +109,8 @@ control MyIngress(inout headers hdr,
     }
 
     // TODO: add mac_learn action, saving ingress_port and cloning packet
-    action mac_learn(bit<16> ingress_port) {
-        meta.ingress_port = ingress_port;
+    action mac_learn() {
+        meta.ingress_port = (bit<16>)smeta.ingress_port;
         clone_preserving_field_list(CloneType.I2E,100,1);
     }
 
@@ -124,7 +124,7 @@ control MyIngress(inout headers hdr,
             NoAction;
         }
         size = 1024;
-        default_action = mac_learn(smeta.ingress_port);
+        default_action = mac_learn();
     }
 
     apply {
