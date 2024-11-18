@@ -123,7 +123,6 @@ control MyIngress(inout headers hdr,
             mac_learn;
             NoAction;
         }
-        size = 1024;
         default_action = mac_learn();
     }
 
