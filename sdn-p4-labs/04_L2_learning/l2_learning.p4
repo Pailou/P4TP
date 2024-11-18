@@ -80,8 +80,8 @@ control MyIngress(inout headers hdr,
     action forward(bit<9> egress_port) {
         smeta.egress_spec = egress_port;
     }
-    action broadcast(bit<16> group) {
-        smeta.mcast_grp = group;
+    action broadcast(bit<16> mcast_grp) {
+        smeta.mcast_grp = mcast_grp;
     }
     // - copy dmac and mcast_grp tables from previous exercise
     table dmac {
