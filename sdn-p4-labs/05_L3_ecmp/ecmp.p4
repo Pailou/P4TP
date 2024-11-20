@@ -63,7 +63,7 @@ struct headers {
 
 struct metadata {
     // TODO: define the metadata needed to store the ecmp_hash
-
+	bit<16> result;
 }
 
 /*************************************************************************
@@ -77,9 +77,23 @@ parser MyParser(packet_in packet,
 
     // TODO: parse ethernet, ipv4 and tcp
     state start {
+	packet.extract(hdr.ethernet);
+	transition select(hdr.ethernet.etherType) {
+		0x800: parse_ipv4;
+		default: accept;
+	}
+	state parse_ipv4 {
+		packet.extract(hdr.ipv4);
+		transition select(hdr.ipv4.protocol) { 
+			6: parse_tcp;
+			default: accept;
+			}
+		}
 
-    }
-
+	state parse_tcp {
+		packet.extract(hdr.tcp);
+		transition accept;
+	}
 }
 
 /*************************************************************************
@@ -100,20 +114,43 @@ control MyIngress(inout headers hdr,
                   inout standard_metadata_t smeta) {
 
     // TODO: define the set_ecmp action (with the hash function)
-
+	action set_ecmp(bit<8> nbr_sauts){
+		bit<1> base = 0;
+		HashAlgorithm algo =;
+		
+	}
 
     // TODO: define the set_nhop action
-
+	action set_nhop(macAddr_t mac_dst, egressSpec_t port) {
+		hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
+		hdr.ethernet.dstAddr = mac_dst;
+		hdr.ipv4.ttl = hdr.ipv4.ttl-1;
+		smeta.egress_spec = port;
+	}
 
     // TODO: define the IP forwarding table (ipv4_lpm)
-
+	table ipv4_lpm {
+		key = {
+			hdr.ipv4.dstAddr : lpm;
+		}
+		actions = {
+			set_nhop;
+			set_ecmp;
+			NoAction();
+		}
+		default_action = NoAction();
+		
+	}
 
     // TODO: define the ecmp table (ecmp_to_nhop)
     // this table is only called when multiple hops are available
+	table ecmp {
 
+	}
 
     apply {
         // TODO: apply
+	
 
     }
 
@@ -164,7 +201,9 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
 control MyDeparser(packet_out packet, in headers hdr) {
     apply {
         // TODO: deparse ethernet, ipv4 and tcp headers
-
+	packet.emit(hdr.ethernet);
+	packet.emit(hdr.ipv4);
+	packet.emit(hdr.tcp);
     }
 }
 
