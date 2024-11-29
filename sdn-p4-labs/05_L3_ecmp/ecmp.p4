@@ -162,7 +162,7 @@ control MyIngress(inout headers hdr,
 	if (hdr.ipv4.isValid()) {
             ipv4_lpm.apply();
 
-            switch (action_run) {
+            switch (ipv4_lpm.apply().action_run) {
                 set_ecmp: {
                     ecmp_to_nhop.apply();
                     }
