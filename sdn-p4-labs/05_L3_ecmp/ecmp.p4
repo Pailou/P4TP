@@ -81,6 +81,7 @@ parser MyParser(packet_in packet,
 	transition select(hdr.ethernet.etherType) {
 		0x800: parse_ipv4;
 		default: accept;
+	   }
 	}
 	state parse_ipv4 {
 		packet.extract(hdr.ipv4);
@@ -116,15 +117,16 @@ control MyIngress(inout headers hdr,
     // TODO: define the set_ecmp action (with the hash function)
 	action set_ecmp(bit<8> nbr_sauts){
 		bit<1> base = 0;
-		HashAlgorithm algo =;
-		
+		HashAlgorithm algo = HashAlgorithm.crc32;
+	        meta.result = 0;
+	        hash(meta.result, algo, base, {hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.tcp.srcPort, hdr.tcp.dstPort}, nbr_sauts);
 	}
 
     // TODO: define the set_nhop action
 	action set_nhop(macAddr_t mac_dst, egressSpec_t port) {
 		hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
 		hdr.ethernet.dstAddr = mac_dst;
-		hdr.ipv4.ttl = hdr.ipv4.ttl-1;
+		hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
 		smeta.egress_spec = port;
 	}
 
@@ -144,16 +146,29 @@ control MyIngress(inout headers hdr,
 
     // TODO: define the ecmp table (ecmp_to_nhop)
     // this table is only called when multiple hops are available
-	table ecmp {
-
-	}
+	 table ecmp_to_nhop {
+	        key = {
+	            meta.result: exact;
+	        }
+	        actions = {
+	            set_nhop;
+	            NoAction();
+	        }
+	        default_action = NoAction();
+    	}
 
     apply {
         // TODO: apply
-	
+	if (hdr.ipv4.isValid()) {
+            ipv4_lpm.apply();
 
-    }
-
+            switch (action_run) {
+                set_ecmp: {
+                    ecmp_to_nhop.apply();
+                    }
+    		  }
+	  }
+	}
 }
 
 /*************************************************************************
