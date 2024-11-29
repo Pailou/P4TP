@@ -138,7 +138,7 @@ control MyIngress(inout headers hdr,
 		actions = {
 			set_nhop;
 			set_ecmp;
-			NoAction();
+			NoAction;
 		}
 		default_action = NoAction();
 		
@@ -152,7 +152,7 @@ control MyIngress(inout headers hdr,
 	        }
 	        actions = {
 	            set_nhop;
-	            NoAction();
+	            NoAction;
 	        }
 	        default_action = NoAction();
     	}
@@ -160,8 +160,6 @@ control MyIngress(inout headers hdr,
     apply {
         // TODO: apply
 	if (hdr.ipv4.isValid()) {
-            ipv4_lpm.apply();
-
             switch (ipv4_lpm.apply().action_run) {
                 set_ecmp: {
                     ecmp_to_nhop.apply();
