@@ -6,32 +6,22 @@
     {
       "table": "MyIngress.ipv4_lpm",
       "match": {
-        "hdr.ipv4.dstAddr": ["10.0.3.0", 24]
+        "hdr.ipv4.dstAddr": ["10.10.10.0", 24]
       },
-      "action_name": "MyIngress.set_ecmp",
+      "action_name": "MyIngress.set_nhop",
       "action_params": {
-        "nbr_sauts": 2
+        "dstAddr": "00:00:00:01:01:01",
+        "port": 2
       }
     },
     {
       "table": "MyIngress.ecmp_to_nhop",
       "match": {
-        "meta.result": 0
+        "hdr.ipv4.dstAddr": ["10.10.10.1", 32]
       },
       "action_name": "MyIngress.set_nhop",
       "action_params": {
-        "dstAddr": "00:00:00:00:02:01",
-        "port": 1
-      }
-    },
-    {
-      "table": "MyIngress.ecmp_to_nhop",
-      "match": {
-        "meta.result": 1
-      },
-      "action_name": "MyIngress.set_nhop",
-      "action_params": {
-        "dstAddr": "00:00:00:00:02:02",
+        "dstAddr": "00:00:00:01:01:01",
         "port": 2
       }
     }
