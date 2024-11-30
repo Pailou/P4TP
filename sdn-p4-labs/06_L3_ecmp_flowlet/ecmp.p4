@@ -135,7 +135,7 @@ control MyIngress(inout headers hdr,
 		flowlet_time_stamp.read(meta.flowlet_last_stamp, (bit<32>)meta.flowlet_register_index);
 		flowlet_id.read(meta.flowlet_id, (bit<32>)meta.flowlet_register_index);
 
-		flowlet_time_stamp.write((bit<32>)meta.flowlet_register_index, standard_metadata.ingress_global_timestamp);
+		flowlet_time_stamp.write((bit<32>)meta.flowlet_register_index, smeta.ingress_global_timestamp);
 
 	}
 
