@@ -127,20 +127,20 @@ control MyIngress(inout headers hdr,
 
 
 	 action read_flowlet_registers(){
-		hash(meta.flowlet_register_index, HashAlgorithm.crc32,
+		hash(meta.flowlet_register_index, HashAlgorithm.crc16,
             	(bit<16>)0,
             	{ hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.tcp.srcPort, hdr.tcp.dstPort,hdr.ipv4.protocol},
             	(bit<14>)4096);
 
 		flowlet_time_stamp.read(meta.flowlet_last_stamp, (bit<32>)meta.flowlet_register_index);
-		flowlet_to_id.read(meta.flowlet_id, (bit<32>)meta.flowlet_register_index);
+		flowlet_id.read(meta.flowlet_id, (bit<32>)meta.flowlet_register_index);
 
 		flowlet_time_stamp.write((bit<32>)meta.flowlet_register_index, standard_metadata.ingress_global_timestamp);
 
 	}
 
 	action update_flowlet_id() {
-		 bit<32> random_t;
+	        bit<32> random_t;
 	        random(random_t, (bit<32>)0, (bit<32>)65000);
 	        meta.flowlet_id = (bit<16>)random_t;
 	        flowlet_to_id.write((bit<32>)meta.flowlet_register_index, (bit<16>)meta.flowlet_id);
@@ -150,8 +150,8 @@ control MyIngress(inout headers hdr,
     // TODO: define the set_ecmp action (with the hash function)
 	action set_ecmp(bit<8> nbr_sauts){
 		bit<1> base = 0;
-		HashAlgorithm algo = HashAlgorithm.crc32;
-	        meta.result = 0;
+		HashAlgorithm algo = HashAlgorithm.crc16;
+	        //meta.result = 0;
 	        hash(meta.result, algo, base, {hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.tcp.srcPort, hdr.tcp.dstPort,meta.flowlet_id}, nbr_sauts);
 	}
 
