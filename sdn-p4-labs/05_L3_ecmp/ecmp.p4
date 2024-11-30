@@ -123,7 +123,7 @@ control MyIngress(inout headers hdr,
 	}
 
     // TODO: define the set_nhop action
-	action set_nhop(macAddr_t mac_dst, egressSpec_t port) {
+	action set_nhop(macAddr_t dstAddr, egressSpec_t port) {
 		hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
 		hdr.ethernet.dstAddr = mac_dst;
 		hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
