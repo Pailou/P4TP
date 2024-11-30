@@ -3,58 +3,26 @@
   "p4info": "build/ecmp.p4.p4info.txt",
   "bmv2_json": "build/ecmp.json",
   "table_entries": [
+    
     {
       "table": "MyIngress.ipv4_lpm",
       "match": {
-        "hdr.ipv4.dstAddr": ["10.10.10.1", 24]
+        "hdr.ipv4.dstAddr": ["10.10.20.0", 24]
       },
       "action_name": "MyIngress.set_nhop",
       "action_params": {
-        "dstAddr": "08:00:00:01:01:11",
+        "dstAddr": "08:00:00:00:02:22",
         "port": 1
       }
     },
     {
       "table": "MyIngress.ipv4_lpm",
       "match": {
-        "hdr.ipv4.dstAddr": ["10.20.20.2", 24]
+        "hdr.ipv4.dstAddr": ["10.10.10.0", 24]
       },
       "action_name": "MyIngress.set_nhop",
       "action_params": {
-        "dstAddr": "08:00:00:02:02:22",
-        "port": 2
-      }
-    },
-    {
-      "table": "MyIngress.ipv4_lpm",
-      "match": {
-        "hdr.ipv4.dstAddr": ["10.0.3.0", 24]
-      },
-      "action_name": "MyIngress.set_ecmp",
-      "action_params": {
-        "nbr_sauts": 2
-      }
-    },
-    {
-      "table": "MyIngress.ecmp_to_nhop",
-      "match": {
-        "meta.result": 0
-      },
-      "action_name": "MyIngress.set_nhop",
-      "action_params": {
-        "dstAddr": "08:00:00:02:02:03",
-        "port": 3
-      }
-    },
-    {
-      "table": "MyIngress.ecmp_to_nhop",
-      "match": {
-        "meta.result": 1
-      },
-      "action_name": "MyIngress.set_nhop",
-      "action_params": {
-        "dstAddr": "08:00:00:02:02:04",
-        "port": 4
+        "nbr_sauts": 4
       }
     },
     {
@@ -64,7 +32,40 @@
       },
       "action_name": "MyIngress.set_nhop",
       "action_params": {
-        "dstAddr": "08:00:00:02:02:05",
+        "dstAddr": "08:00:00:00:01:11",
+        "port": 2
+      }
+    },
+    {
+      "table": "MyIngress.ecmp_to_nhop",
+      "match": {
+        "meta.result": 3
+      },
+      "action_name": "MyIngress.set_nhop",
+      "action_params": {
+        "dstAddr": "08:00:00:00:02:22",
+        "port": 3
+      }
+    },
+    {
+      "table": "MyIngress.ecmp_to_nhop",
+      "match": {
+        "meta.result": 4
+      },
+      "action_name": "MyIngress.set_nhop",
+      "action_params": {
+        "dstAddr": "08:00:00:00:01:11",
+        "port": 4
+      }
+    },
+    {
+      "table": "MyIngress.ecmp_to_nhop",
+      "match": {
+        "meta.result": 5
+      },
+      "action_name": "MyIngress.set_nhop",
+      "action_params": {
+        "dstAddr": "08:00:00:00:01:11",
         "port": 5
       }
     }
