@@ -132,7 +132,7 @@ control MyIngress(inout headers hdr,
             	{ hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.tcp.srcPort, hdr.tcp.dstPort,hdr.ipv4.protocol},
             	(bit<14>)4096);
 
-		flowlet_time_stamp.read(meta.flowlet_last_stamp, (bit<32>)meta.flowlet_register_index);
+		flowlet_time_stamp.read(meta.flowlet_time_stamp, (bit<32>)meta.flowlet_register_index);
 		flowlet_id.read(meta.flowlet_id, (bit<32>)meta.flowlet_register_index);
 
 		flowlet_time_stamp.write((bit<32>)meta.flowlet_register_index, smeta.ingress_global_timestamp);
