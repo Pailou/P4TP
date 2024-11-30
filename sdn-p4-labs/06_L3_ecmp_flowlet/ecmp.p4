@@ -6,8 +6,10 @@
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
 
+#define REGISTER_SIZE 4096
+#define FLOWLET_TIMEOUT 48w200000
 const bit<16> TYPE_IPV4 = 0x800;
-const bit<8>  TYPE_TCP  = 0x06;
+
 
 typedef bit<9>  egressSpec_t;
 typedef bit<48> macAddr_t;
@@ -64,6 +66,10 @@ struct headers {
 struct metadata {
     // TODO: define the metadata needed to store the ecmp_hash
 	bit<16> result;
+
+	bit<16> flowlet_register_index;
+	bit<16> flowlet_id;
+    	bit<48> flowlet_time_stamp;
 }
 
 /*************************************************************************
@@ -114,14 +120,39 @@ control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t smeta) {
 
+	register<bit<16>>(REGISTER_SIZE) flowlet_id;
+	register<bit<48>>(REGISTER_SIZE) flowlet_time_stamp;
+
 	direct_counter(CounterType.packets_and_bytes) dst_prefix_counter;
 
+
+	 action read_flowlet_registers(){
+		hash(meta.flowlet_register_index, HashAlgorithm.crc32,
+            	(bit<16>)0,
+            	{ hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.tcp.srcPort, hdr.tcp.dstPort,hdr.ipv4.protocol},
+            	(bit<14>)4096);
+
+		flowlet_time_stamp.read(meta.flowlet_last_stamp, (bit<32>)meta.flowlet_register_index);
+		flowlet_to_id.read(meta.flowlet_id, (bit<32>)meta.flowlet_register_index);
+
+		flowlet_time_stamp.write((bit<32>)meta.flowlet_register_index, standard_metadata.ingress_global_timestamp);
+
+	}
+
+	action update_flowlet_id() {
+		 bit<32> random_t;
+	        random(random_t, (bit<32>)0, (bit<32>)65000);
+	        meta.flowlet_id = (bit<16>)random_t;
+	        flowlet_to_id.write((bit<32>)meta.flowlet_register_index, (bit<16>)meta.flowlet_id);
+	}
+
+	
     // TODO: define the set_ecmp action (with the hash function)
 	action set_ecmp(bit<8> nbr_sauts){
 		bit<1> base = 0;
 		HashAlgorithm algo = HashAlgorithm.crc32;
 	        meta.result = 0;
-	        hash(meta.result, algo, base, {hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.tcp.srcPort, hdr.tcp.dstPort}, nbr_sauts);
+	        hash(meta.result, algo, base, {hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.tcp.srcPort, hdr.tcp.dstPort,meta.flowlet_id}, nbr_sauts);
 	}
 
     // TODO: define the set_nhop action
@@ -163,6 +194,10 @@ control MyIngress(inout headers hdr,
     apply {
         // TODO: apply
 	if (hdr.ipv4.isValid()) {
+	    read_flowlet_registers();
+	    if ((smeta.ingress_global_timestamp - meta.flowlet_timestamp) >FLOWLET_TIMEOUT){
+		update_flowlet_id();
+	    }
             switch (ipv4_lpm.apply().action_run) {
                 set_ecmp: {
                     ecmp_to_nhop.apply();
