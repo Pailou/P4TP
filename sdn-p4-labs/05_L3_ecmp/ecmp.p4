@@ -149,7 +149,6 @@ control MyIngress(inout headers hdr,
 	 table ecmp_to_nhop {
 	        key = {
 	            meta.result: exact;
-		    meta.
 	        }
 	        actions = {
 	            set_nhop;
