@@ -143,7 +143,7 @@ control MyIngress(inout headers hdr,
 	        bit<32> random_t;
 	        random(random_t, (bit<32>)0, (bit<32>)65000);
 	        meta.flowlet_id = (bit<16>)random_t;
-	        flowlet_to_id.write((bit<32>)meta.flowlet_register_index, (bit<16>)meta.flowlet_id);
+	        flowlet_id.write((bit<32>)meta.flowlet_register_index, (bit<16>)meta.flowlet_id);
 	}
 
 	
