@@ -11,7 +11,7 @@
       },
       "action_name": "MyIngress.set_nhop",
       "action_params": {
-        "dstAddr": "00:00:00:00:02:22",
+        "dstAddr": "00:00:00:02:02:22",
         "port": 1
       }
     },
