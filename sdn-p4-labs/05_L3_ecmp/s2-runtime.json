@@ -20,7 +20,7 @@
       },
       "action_name": "MyIngress.set_nhop",
       "action_params": {
-        "mac_dst": "00:00:00:00:02:01",
+        "dstAddr": "00:00:00:00:02:01",
         "port": 1
       }
     },
@@ -31,7 +31,7 @@
       },
       "action_name": "MyIngress.set_nhop",
       "action_params": {
-        "mac_dst": "00:00:00:00:02:02",
+        "dstAddr": "00:00:00:00:02:02",
         "port": 2
       }
     }
