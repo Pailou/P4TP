@@ -21,7 +21,7 @@
           },
           "action_name": "MyIngress.set_ecmp",
           "action_params": {
-              "n_hop": 4
+              "nbr_sauts": 4
           }
       },
       {
