@@ -28,7 +28,7 @@
     {
       "table": "MyIngress.ecmp_to_nhop",
       "match": {
-        "meta.result": 2
+        "meta.result": 0
       },
       "action_name": "MyIngress.set_nhop",
       "action_params": {
@@ -39,7 +39,7 @@
     {
       "table": "MyIngress.ecmp_to_nhop",
       "match": {
-        "meta.result": 3
+        "meta.result": 1
       },
       "action_name": "MyIngress.set_nhop",
       "action_params": {
@@ -50,7 +50,7 @@
     {
       "table": "MyIngress.ecmp_to_nhop",
       "match": {
-        "meta.result": 4
+        "meta.result": 2
       },
       "action_name": "MyIngress.set_nhop",
       "action_params": {
@@ -61,7 +61,7 @@
     {
       "table": "MyIngress.ecmp_to_nhop",
       "match": {
-        "meta.result": 5
+        "meta.result": 3
       },
       "action_name": "MyIngress.set_nhop",
       "action_params": {
