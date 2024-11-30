@@ -79,7 +79,7 @@ parser MyParser(packet_in packet,
     state start {
 	packet.extract(hdr.ethernet);
 	transition select(hdr.ethernet.etherType) {
-		0x800: parse_ipv4;
+		TYPE_IPV4: parse_ipv4;
 		default: accept;
 	   }
 	}
@@ -149,6 +149,7 @@ control MyIngress(inout headers hdr,
 	 table ecmp_to_nhop {
 	        key = {
 	            meta.result: exact;
+		    meta.
 	        }
 	        actions = {
 	            set_nhop;
