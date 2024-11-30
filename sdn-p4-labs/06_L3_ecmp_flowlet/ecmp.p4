@@ -195,7 +195,7 @@ control MyIngress(inout headers hdr,
         // TODO: apply
 	if (hdr.ipv4.isValid()) {
 	    read_flowlet_registers();
-	    if ((smeta.ingress_global_timestamp - meta.flowlet_timestamp) >FLOWLET_TIMEOUT){
+	    if ((smeta.ingress_global_timestamp - meta.flowlet_time_stamp) >FLOWLET_TIMEOUT){
 		update_flowlet_id();
 	    }
             switch (ipv4_lpm.apply().action_run) {
