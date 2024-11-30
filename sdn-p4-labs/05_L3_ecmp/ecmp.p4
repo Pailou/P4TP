@@ -142,7 +142,7 @@ control MyIngress(inout headers hdr,
 			set_ecmp;
 			NoAction;
 		}
-		counter = dst_prefix_counter;
+		counters = dst_prefix_counter;
 		default_action = NoAction();
 		
 	}
