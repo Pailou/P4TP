@@ -114,6 +114,8 @@ control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t smeta) {
 
+	direct_counter(CounterType.packets_and_bytes) dst_prefix_counter;
+
     // TODO: define the set_ecmp action (with the hash function)
 	action set_ecmp(bit<8> nbr_sauts){
 		bit<1> base = 0;
@@ -140,6 +142,7 @@ control MyIngress(inout headers hdr,
 			set_ecmp;
 			NoAction;
 		}
+		counter = dst_prefix_counter;
 		default_action = NoAction();
 		
 	}
