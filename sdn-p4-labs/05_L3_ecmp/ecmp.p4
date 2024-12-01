@@ -119,7 +119,7 @@ control MyIngress(inout headers hdr,
     // TODO: define the set_ecmp action (with the hash function)
 	action set_ecmp(bit<8> nbr_sauts){
 		bit<1> base = 0;
-		HashAlgorithm algo = HashAlgorithm.crc16;
+		HashAlgorithm algo = HashAlgorithm.crc32;
 	        meta.result = 0;
 	        hash(meta.result, algo, base, {hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.tcp.srcPort, hdr.tcp.dstPort}, nbr_sauts);
 	}
